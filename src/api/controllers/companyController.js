@@ -3,57 +3,81 @@ const prisma = new PrismaClient();
 
 const companyController = {
   createCompany: async (req, res) => {
-    const { name, industry } = req.body;
+    const { companyName, companyStatus } = req.body;
     try {
-      const company = await prisma.company.create({ name, industry });
+      const company = await prisma.company.create({
+        data: {
+          companyName,
+          companyStatus,
+        },
+      });
       res.json(company);
     } catch (error) {
-      res.status(500).json({ error: "Error creating company" });
+      res
+        .status(500)
+        .json({ error: "Error creating company", details: error.message });
     }
   },
 
-  getAllCompany: async (req, res) => {
+  getAllCompanies: async (req, res) => {
     try {
-      const company = await prisma.company.findMany();
-      console.log("getAllCompany started working. Great!");
-      res.json(company);
+      const companies = await prisma.company.findMany();
+      res.json(companies);
     } catch (error) {
-      res.status(500).json({ error: "Error fetching company" });
+      res
+        .status(500)
+        .json({ error: "Error fetching companies", details: error.message });
     }
   },
 
   getCompanyById: async (req, res) => {
     const { id } = req.params;
     try {
-      const company = await prisma.company.findById(id);
+      const company = await prisma.company.findUnique({
+        where: { id: parseInt(id) },
+      });
       if (company) {
         res.json(company);
       } else {
         res.status(404).json({ error: "Company not found" });
       }
     } catch (error) {
-      res.status(500).json({ error: "Error fetching company" });
+      res
+        .status(500)
+        .json({ error: "Error fetching company", details: error.message });
     }
   },
 
   updateCompany: async (req, res) => {
     const { id } = req.params;
-    const { name, industry } = req.body;
+    const { companyName, companyStatus } = req.body;
     try {
-      const company = await prisma.company.update(id, { name, industry });
+      const company = await prisma.company.update({
+        where: { id: parseInt(id) },
+        data: {
+          companyName,
+          companyStatus,
+        },
+      });
       res.json(company);
     } catch (error) {
-      res.status(500).json({ error: "Error updating company" });
+      res
+        .status(500)
+        .json({ error: "Error updating company", details: error.message });
     }
   },
 
   deleteCompany: async (req, res) => {
     const { id } = req.params;
     try {
-      await prisma.company.delete(id);
+      await prisma.company.delete({
+        where: { id: parseInt(id) },
+      });
       res.json({ message: "Company deleted successfully" });
     } catch (error) {
-      res.status(500).json({ error: "Error deleting company" });
+      res
+        .status(500)
+        .json({ error: "Error deleting company", details: error.message });
     }
   },
 };

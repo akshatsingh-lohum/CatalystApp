@@ -3,56 +3,110 @@ const prisma = new PrismaClient();
 
 const requestController = {
   createRequest: async (req, res) => {
-    const { name, industry } = req.body;
+    const {
+      lotWeightKg,
+      catalystName,
+      lotID,
+      catalystPercent,
+      catalystWeight,
+      companyID,
+      dealerId,
+    } = req.body;
     try {
-      const request = await prisma.request.create({ name, industry });
+      const request = await prisma.request.create({
+        data: {
+          lotWeightKg: parseFloat(lotWeightKg),
+          catalystName,
+          lotID,
+          catalystPercent: catalystPercent ? parseFloat(catalystPercent) : null,
+          catalystWeight: catalystWeight ? parseFloat(catalystWeight) : null,
+          companyID: parseInt(companyID),
+          dealerId: parseInt(dealerId),
+        },
+      });
       res.json(request);
     } catch (error) {
-      res.status(500).json({ error: "Error creating request" });
+      res
+        .status(500)
+        .json({ error: "Error creating request", details: error.message });
     }
   },
 
   getAllRequests: async (req, res) => {
     try {
-      const requests = await prisma.request.findAll();
+      const requests = await prisma.request.findMany({
+        include: { company: true, dealer: true },
+      });
       res.json(requests);
     } catch (error) {
-      res.status(500).json({ error: "Error fetching requests" });
+      res
+        .status(500)
+        .json({ error: "Error fetching requests", details: error.message });
     }
   },
 
   getRequestById: async (req, res) => {
     const { id } = req.params;
     try {
-      const request = await prisma.request.findById(id);
+      const request = await prisma.request.findUnique({
+        where: { id: parseInt(id) },
+        include: { company: true, dealer: true },
+      });
       if (request) {
         res.json(request);
       } else {
         res.status(404).json({ error: "Request not found" });
       }
     } catch (error) {
-      res.status(500).json({ error: "Error fetching request" });
+      res
+        .status(500)
+        .json({ error: "Error fetching request", details: error.message });
     }
   },
 
   updateRequest: async (req, res) => {
     const { id } = req.params;
-    const { name, industry } = req.body;
+    const {
+      lotWeightKg,
+      catalystName,
+      lotID,
+      catalystPercent,
+      catalystWeight,
+      companyID,
+      dealerId,
+    } = req.body;
     try {
-      const request = await prisma.request.update(id, { name, industry });
+      const request = await prisma.request.update({
+        where: { id: parseInt(id) },
+        data: {
+          lotWeightKg: parseFloat(lotWeightKg),
+          catalystName,
+          lotID,
+          catalystPercent: catalystPercent ? parseFloat(catalystPercent) : null,
+          catalystWeight: catalystWeight ? parseFloat(catalystWeight) : null,
+          companyID: parseInt(companyID),
+          dealerId: parseInt(dealerId),
+        },
+      });
       res.json(request);
     } catch (error) {
-      res.status(500).json({ error: "Error updating request" });
+      res
+        .status(500)
+        .json({ error: "Error updating request", details: error.message });
     }
   },
 
   deleteRequest: async (req, res) => {
     const { id } = req.params;
     try {
-      await prisma.request.delete(id);
+      await prisma.request.delete({
+        where: { id: parseInt(id) },
+      });
       res.json({ message: "Request deleted successfully" });
     } catch (error) {
-      res.status(500).json({ error: "Error deleting request" });
+      res
+        .status(500)
+        .json({ error: "Error deleting request", details: error.message });
     }
   },
 };
