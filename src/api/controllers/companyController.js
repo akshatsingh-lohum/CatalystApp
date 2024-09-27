@@ -19,14 +19,14 @@ const companyController = {
     }
   },
 
-  getAllCompanies: async (req, res) => {
+  getAllCompany: async (req, res) => {
     try {
-      const companies = await prisma.company.findMany();
-      res.json(companies);
+      const company = await prisma.company.findMany();
+      res.json(company);
     } catch (error) {
       res
         .status(500)
-        .json({ error: "Error fetching companies", details: error.message });
+        .json({ error: "Error fetching company", details: error.message });
     }
   },
 

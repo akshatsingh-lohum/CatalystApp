@@ -2,18 +2,12 @@ const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
 const userRoleController = {
+  // FIX THIS
   getUserRole: async (req, res) => {
     const { userId } = req.params;
     try {
-      const user = await prisma.user.findUnique({
-        where: { id: parseInt(userId) },
-        select: { role: true },
-      });
-      if (user) {
-        res.json({ role: user.role });
-      } else {
-        res.status(404).json({ error: "User not found" });
-      }
+      // FIX THIS
+      res.status(200).json({ role: "admin" });
     } catch (error) {
       res
         .status(500)
