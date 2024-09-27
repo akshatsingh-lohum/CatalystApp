@@ -1,7 +1,7 @@
 const prisma = require("./src/config/database");
 
-async function seedCompanies() {
-  const demoCompanies = [
+async function seedCompany() {
+  const demoCompany = [
     { companyName: "Test: Acme Corp", companyStatus: "ACTIVE" },
     { companyName: "Test: Globex Corporation", companyStatus: "ACTIVE" },
     { companyName: "Test: Soylent Corp", companyStatus: "ACTIVE" },
@@ -12,18 +12,18 @@ async function seedCompanies() {
     },
   ];
 
-  const companies = [];
-  for (const company of demoCompanies) {
+  const company = [];
+  for (const company of demoCompany) {
     const createdCompany = await prisma.company.create({
       data: company,
     });
-    companies.push(createdCompany);
+    company.push(createdCompany);
   }
-  console.log("Seed data for companies inserted successfully.");
-  return companies;
+  console.log("Seed data for company inserted successfully.");
+  return company;
 }
 
-async function seedDealers(companies) {
+async function seedDealers(company) {
   const demoDealers = [
     {
       name: "Test: Dealer A",
@@ -51,7 +51,7 @@ async function seedDealers(companies) {
     const createdDealer = await prisma.dealer.create({
       data: {
         ...dealer,
-        companyID: companies[i % companies.length].id,
+        companyID: company[i % company.length].id,
       },
     });
     dealers.push(createdDealer);
@@ -97,7 +97,7 @@ async function seedUsers(dealers) {
   console.log("Seed data for users inserted successfully.");
 }
 
-async function seedRequests(companies, dealers) {
+async function seedRequests(company, dealers) {
   const demoRequests = [
     {
       lotWeightKg: 1000,
@@ -127,7 +127,7 @@ async function seedRequests(companies, dealers) {
     await prisma.request.create({
       data: {
         ...request,
-        companyID: companies[i % companies.length].id,
+        companyID: company[i % company.length].id,
         dealerId: dealers[i % dealers.length].id,
       },
     });
@@ -137,10 +137,10 @@ async function seedRequests(companies, dealers) {
 
 async function main() {
   try {
-    const companies = await seedCompanies();
-    const dealers = await seedDealers(companies);
+    const company = await seedCompany();
+    const dealers = await seedDealers(company);
     await seedUsers(dealers);
-    await seedRequests(companies, dealers);
+    await seedRequests(company, dealers);
     console.log("All seed data inserted successfully.");
   } catch (e) {
     console.error("Error seeding data:", e);

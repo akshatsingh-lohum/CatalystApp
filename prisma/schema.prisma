@@ -42,10 +42,10 @@ model User {
   phone         String?   @unique
   password      String
   dealerId      Int
-  role          USER_ROLE
   dealer        Dealer    @relation(fields: [dealerId], references: [id])
   userCreatedAt DateTime  @default(now())
   userUpdatedAt DateTime  @updatedAt
+  role          USER_ROLE
 }
 
 model Request {

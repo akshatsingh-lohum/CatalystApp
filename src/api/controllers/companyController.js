@@ -12,12 +12,13 @@ const companyController = {
     }
   },
 
-  getAllCompanies: async (req, res) => {
+  getAllCompany: async (req, res) => {
     try {
-      const companies = await prisma.company.findAll();
-      res.json(companies);
+      const company = await prisma.company.findMany();
+      console.log("getAllCompany started working. Great!");
+      res.json(company);
     } catch (error) {
-      res.status(500).json({ error: "Error fetching companies" });
+      res.status(500).json({ error: "Error fetching company" });
     }
   },
 
