@@ -1,0 +1,150 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Company {
+  id               Int            @id @default(autoincrement())
+  companyName      String         @unique
+  companyStatus    COMPANY_STATUS
+  companyCreatedAt DateTime       @default(now())
+  companyUpdatedAt DateTime       @updatedAt
+  dealers          Dealer[]
+  requests         Request[]
+}
+
+model Dealer {
+  id        Int       @id @default(autoincrement())
+  name      String
+  email     String
+  phone     String    @unique
+  address   String
+  companyID Int
+  company   Company   @relation(fields: [companyID], references: [id])
+  requests  Request[]
+  users     User[]
+}
+
+model User {
+  id            Int       @id @default(autoincrement())
+  name          String
+  email         String    @unique
+  phone         String?   @unique
+  password      String
+  dealerId      Int
+  role          USER_ROLE
+  dealer        Dealer    @relation(fields: [dealerId], references: [id])
+  userCreatedAt DateTime  @default(now())
+  userUpdatedAt DateTime  @updatedAt
+}
+
+model Request {
+  id              Int     @id @default(autoincrement())
+  lotWeightKg     Float
+  catalystName    String
+  lotID           String  @unique
+  catalystPercent Float?
+  catalystWeight  Float?
+  companyID       Int
+  company         Company @relation(fields: [companyID], references: [id])
+  dealerId        Int
+  dealer          Dealer  @relation(fields: [dealerId], references: [id])
+}
+
+model SecurityChecks {
+  id     Int    @id @default(autoincrement())
+  videos String
+  photos String
+  lotID  String @unique
+  stage  STAGE
+}
+
+model MaterialToWarehouse {
+  id             Int             @id @default(autoincrement())
+  lotWeightKg    Float
+  videos         String
+  photos         String
+  clientApproved CLIENT_APPROVAL
+  lotID          String          @unique
+  stage          STAGE
+}
+
+model Incineration {
+  id             Int               @id @default(autoincrement())
+  videos         String
+  photos         String
+  custApproved   CUSTOMER_APPROVAL
+  clientApproved CLIENT_APPROVAL
+  lotID          String            @unique
+  stage          STAGE
+  catalystWeight Float
+}
+
+model Vault {
+  id     Int    @id @default(autoincrement())
+  videos String
+  lotID  String @unique
+  stage  STAGE
+}
+
+model Production {
+  id          Int    @id @default(autoincrement())
+  videos      String
+  photos      String
+  lotID       String @unique
+  stage       STAGE
+  lossPercent Float
+}
+
+model Dispatch {
+  id          Int    @id @default(autoincrement())
+  lotWeightKg Float
+  videos      String
+  photos      String
+  lotID       String @unique
+  stage       STAGE
+  dispatchNo  String
+}
+
+enum CUSTOMER_APPROVAL {
+  YES
+  NO
+  PENDING
+}
+
+enum CLIENT_APPROVAL {
+  YES
+  NO
+  PENDING
+}
+
+enum STAGE {
+  REQUEST
+  SECURITY_CHECKS
+  MATERIAL_TO_WAREHOUSE
+  INCINERATION
+  VAULT
+  PRODUCTION
+  DISPATCH
+}
+
+enum COMPANY_STATUS {
+  ACTIVE
+  INACTIVE
+}
+
+enum USER_ROLE {
+  ADMIN
+  USER
+  DATA_UPLOAD
+}
