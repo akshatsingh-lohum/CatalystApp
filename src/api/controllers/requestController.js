@@ -20,8 +20,8 @@ const requestController = {
           lotID,
           catalystPercent: catalystPercent ? parseFloat(catalystPercent) : null,
           catalystWeight: catalystWeight ? parseFloat(catalystWeight) : null,
-          companyID: parseInt(companyID),
-          dealerId: parseInt(dealerId),
+          companyID: req.userCompany.id,
+          dealerId: dealerId,
         },
       });
       res.json(request);

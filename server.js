@@ -1,8 +1,11 @@
 const express = require("express");
 const cors = require("cors");
-const routes = require("./src/api/routes");
-
+const publicRoutes = require("./src/api/routes/publicRoutes");
+const protectedRoutes = require("./src/api/routes/protectedRoutes");
+const authMiddleware = require("./middleware/AuthMiddleware");
 const app = express();
+
+require("dotenv").config();
 
 // CORS configuration
 const corsOptions = {
@@ -16,7 +19,6 @@ const corsOptions = {
 
 // Use CORS middleware
 app.use(cors(corsOptions));
-
 app.use(express.json());
 
 // Root endpoint
@@ -24,8 +26,14 @@ app.get("/", (req, res) => {
   res.json({ message: "Server is working well!" });
 });
 
-// Use the automatically loaded routes
-app.use("/", routes);
+// Public routes
+app.use("/", publicRoutes);
+
+// Apply auth middleware to protected routes
+app.use(authMiddleware);
+
+// Protected routes
+app.use("/", protectedRoutes);
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {

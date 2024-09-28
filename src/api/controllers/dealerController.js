@@ -3,18 +3,18 @@ const prisma = new PrismaClient();
 
 const dealerController = {
   createDealer: async (req, res) => {
-    const { name, email, phone, address, companyID } = req.body;
+    const { name, email, phone, address } = req.body;
     try {
-      const dealer = await prisma.dealer.create({
+      const newDealer = await prisma.dealer.create({
         data: {
           name,
           email,
           phone,
           address,
-          companyID: parseInt(companyID),
+          companyID: req.userCompany.id, // Assuming req.userCompany is set by middleware
         },
       });
-      res.json(dealer);
+      res.status(201).json(newDealer);
     } catch (error) {
       res
         .status(500)
@@ -25,7 +25,7 @@ const dealerController = {
   getAllDealers: async (req, res) => {
     try {
       const dealers = await prisma.dealer.findMany({
-        include: { company: true },
+        where: { companyID: req.userCompany.id },
       });
       res.json(dealers);
     } catch (error) {
@@ -42,7 +42,7 @@ const dealerController = {
         where: { id: parseInt(id) },
         include: { company: true },
       });
-      if (dealer) {
+      if (dealer && dealer.companyID === req.userCompany.id) {
         res.json(dealer);
       } else {
         res.status(404).json({ error: "Dealer not found" });
@@ -56,16 +56,18 @@ const dealerController = {
 
   updateDealer: async (req, res) => {
     const { id } = req.params;
-    const { name, email, phone, address, companyID } = req.body;
+    const { name, email, phone, address } = req.body;
     try {
       const dealer = await prisma.dealer.update({
-        where: { id: parseInt(id) },
+        where: {
+          id: parseInt(id),
+          companyID: req.userCompany.id,
+        },
         data: {
           name,
           email,
           phone,
           address,
-          companyID: parseInt(companyID),
         },
       });
       res.json(dealer);
@@ -80,7 +82,10 @@ const dealerController = {
     const { id } = req.params;
     try {
       await prisma.dealer.delete({
-        where: { id: parseInt(id) },
+        where: {
+          id: parseInt(id),
+          companyID: req.userCompany.id,
+        },
       });
       res.json({ message: "Dealer deleted successfully" });
     } catch (error) {

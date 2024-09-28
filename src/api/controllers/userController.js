@@ -27,6 +27,7 @@ const userController = {
     try {
       const users = await prisma.user.findMany({
         include: { dealer: true },
+        where: { dealerId: req.user.dealerId },
       });
       res.json(users);
     } catch (error) {

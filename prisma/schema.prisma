@@ -144,7 +144,10 @@ enum COMPANY_STATUS {
 }
 
 enum USER_ROLE {
-  ADMIN
-  USER
-  DATA_UPLOAD
+  SUPER_ADMIN
+  COMPANY_ADMIN
+  DEALER_ADMIN
+  VIEWER
+  DATA_UPLOAD // Without View
+  USER // Lowest Level of Auth
 }

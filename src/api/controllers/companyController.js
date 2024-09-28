@@ -21,12 +21,27 @@ const companyController = {
 
   getAllCompany: async (req, res) => {
     try {
-      const company = await prisma.company.findMany();
-      res.json(company);
+      let companies;
+
+      switch (user.role) {
+        case "admin":
+          // Admins can see all companies
+          companies = await prisma.company.findMany();
+          break;
+        case "manager":
+          // Managers can only see their own company
+          companies = await prisma.company.findMany({
+            where: { id: user.companyId },
+          });
+          break;
+        default:
+          // Other roles are not allowed to fetch companies
+          throw new Error("Unauthorized to view company data");
+      }
+
+      return companies;
     } catch (error) {
-      res
-        .status(500)
-        .json({ error: "Error fetching company", details: error.message });
+      throw error;
     }
   },
 
