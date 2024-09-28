@@ -20,7 +20,7 @@ const userRoleController = {
     const { role } = req.body;
     try {
       const updatedUser = await prisma.user.update({
-        where: { id: parseInt(userId) },
+        where: { id: userId },
         data: { role },
         select: { id: true, name: true, role: true },
       });

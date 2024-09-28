@@ -49,7 +49,7 @@ const requestController = {
     const { id } = req.params;
     try {
       const request = await prisma.request.findUnique({
-        where: { id: parseInt(id) },
+        where: { id: id },
         include: { company: true, dealer: true },
       });
       if (request) {
@@ -77,15 +77,15 @@ const requestController = {
     } = req.body;
     try {
       const request = await prisma.request.update({
-        where: { id: parseInt(id) },
+        where: { id: id },
         data: {
           lotWeightKg: parseFloat(lotWeightKg),
           catalystName,
           lotID,
           catalystPercent: catalystPercent ? parseFloat(catalystPercent) : null,
           catalystWeight: catalystWeight ? parseFloat(catalystWeight) : null,
-          companyID: parseInt(companyID),
-          dealerId: parseInt(dealerId),
+          companyID: companyID,
+          dealerId: dealerId,
         },
       });
       res.json(request);
@@ -100,7 +100,7 @@ const requestController = {
     const { id } = req.params;
     try {
       await prisma.request.delete({
-        where: { id: parseInt(id) },
+        where: { id: id },
       });
       res.json({ message: "Request deleted successfully" });
     } catch (error) {

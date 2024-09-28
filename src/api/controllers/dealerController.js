@@ -39,7 +39,7 @@ const dealerController = {
     const { id } = req.params;
     try {
       const dealer = await prisma.dealer.findUnique({
-        where: { id: parseInt(id) },
+        where: { id: id },
         include: { company: true },
       });
       if (dealer && dealer.companyID === req.userCompany.id) {
@@ -60,7 +60,7 @@ const dealerController = {
     try {
       const dealer = await prisma.dealer.update({
         where: {
-          id: parseInt(id),
+          id: id,
           companyID: req.userCompany.id,
         },
         data: {
@@ -83,7 +83,7 @@ const dealerController = {
     try {
       await prisma.dealer.delete({
         where: {
-          id: parseInt(id),
+          id: id,
           companyID: req.userCompany.id,
         },
       });

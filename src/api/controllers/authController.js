@@ -54,7 +54,7 @@ exports.signup = async (req, res) => {
 
     // Validate dealerId
     const dealer = await prisma.dealer.findUnique({
-      where: { id: parseInt(dealerId) },
+      where: { id: dealerId },
     });
     if (!dealer) {
       return res.status(400).json({ error: "Invalid dealer ID" });
@@ -71,7 +71,7 @@ exports.signup = async (req, res) => {
         email,
         phone,
         password: hashedPassword,
-        dealerId: parseInt(dealerId),
+        dealerId: dealerId,
         role: role || "USER",
       },
     });

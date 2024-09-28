@@ -11,7 +11,7 @@ const userController = {
           email,
           phone,
           password, // Note: In a real application, you should hash the password before storing it
-          dealerId: parseInt(dealerId),
+          dealerId: dealerId,
           role,
         },
       });
@@ -41,7 +41,7 @@ const userController = {
     const { id } = req.params;
     try {
       const user = await prisma.user.findUnique({
-        where: { id: parseInt(id) },
+        where: { id: id },
         include: { dealer: true },
       });
       if (user) {
@@ -61,13 +61,13 @@ const userController = {
     const { name, email, phone, password, dealerId, role } = req.body;
     try {
       const user = await prisma.user.update({
-        where: { id: parseInt(id) },
+        where: { id: id },
         data: {
           name,
           email,
           phone,
           password, // Note: In a real application, you should hash the password before updating it
-          dealerId: parseInt(dealerId),
+          dealerId: dealerId,
           role,
         },
       });
@@ -83,7 +83,7 @@ const userController = {
     const { id } = req.params;
     try {
       await prisma.user.delete({
-        where: { id: parseInt(id) },
+        where: { id: id },
       });
       res.json({ message: "User deleted successfully" });
     } catch (error) {

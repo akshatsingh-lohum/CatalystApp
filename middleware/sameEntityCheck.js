@@ -47,7 +47,7 @@ const checkSameDealer = async (req, res, next) => {
         include: { company: true },
       }),
       prisma.dealer.findUnique({
-        where: { id: parseInt(requestId) },
+        where: { id: requestId },
         include: { company: true },
       }),
     ]);
@@ -81,7 +81,7 @@ const checkSameUser = async (req, res, next) => {
 
     // Fetch the request with its associated dealer and company
     const request = await prisma.request.findUnique({
-      where: { id: parseInt(requestId) },
+      where: { id: requestId },
       include: {
         dealer: true,
         company: true,
@@ -128,7 +128,7 @@ const checkSameDealerViaUserId = async (req, res, next) => {
 
     // Fetch the requested user with their dealer information
     const requestedUser = await prisma.user.findUnique({
-      where: { id: parseInt(requestedUserId) },
+      where: { id: requestedUserId },
       include: { dealer: true },
     });
 

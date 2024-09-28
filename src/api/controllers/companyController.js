@@ -49,7 +49,7 @@ const companyController = {
     const { id } = req.params;
     try {
       const company = await prisma.company.findUnique({
-        where: { id: parseInt(id) },
+        where: { id: id },
       });
       if (company) {
         res.json(company);
@@ -68,7 +68,7 @@ const companyController = {
     const { companyName, companyStatus } = req.body;
     try {
       const company = await prisma.company.update({
-        where: { id: parseInt(id) },
+        where: { id: id },
         data: {
           companyName,
           companyStatus,
@@ -86,7 +86,7 @@ const companyController = {
     const { id } = req.params;
     try {
       await prisma.company.delete({
-        where: { id: parseInt(id) },
+        where: { id: id },
       });
       res.json({ message: "Company deleted successfully" });
     } catch (error) {
