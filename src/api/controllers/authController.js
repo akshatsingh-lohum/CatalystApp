@@ -16,42 +16,6 @@ const generateToken = (user) => {
   );
 };
 
-exports.register = async (req, res) => {
-  try {
-    const { name, email, phone, password, dealerId, role } = req.body;
-
-    // Check if user already exists
-    let user = await prisma.user.findUnique({ where: { email } });
-    if (user) {
-      return res.status(400).json({ error: "User already exists" });
-    }
-
-    // Hash password
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
-
-    // Create new user
-    user = await prisma.user.create({
-      data: {
-        name,
-        email,
-        phone,
-        password: hashedPassword,
-        dealerId: parseInt(dealerId),
-        role: role || "USER",
-      },
-    });
-
-    // Generate token
-    const token = generateToken(user);
-
-    res.status(201).json({ token });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Server error", details: error.message });
-  }
-};
-
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -72,40 +36,6 @@ exports.login = async (req, res) => {
     const token = generateToken(user);
 
     res.json({ token });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Server error", details: error.message });
-  }
-};
-
-exports.getProfile = async (req, res) => {
-  try {
-    const user = await prisma.user.findUnique({
-      where: { id: req.user.id },
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        phone: true,
-        role: true,
-        dealerId: true,
-        dealer: {
-          select: {
-            name: true,
-            company: {
-              select: {
-                id: true,
-                companyName: true,
-              },
-            },
-          },
-        },
-      },
-    });
-    if (!user) {
-      return res.status(404).json({ error: "User not found" });
-    }
-    res.json(user);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Server error", details: error.message });
