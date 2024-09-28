@@ -35,6 +35,10 @@ app.use(authMiddleware);
 // Protected routes
 app.use("/", protectedRoutes);
 
+//Just for logging all the routes and documenting it
+const { exportRoutes } = require("./routeExporter");
+const routes = exportRoutes(app, "./routes.txt");
+
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(

@@ -1,29 +1,38 @@
-const prisma = require("./src/config/database");
+const { PrismaClient } = require("@prisma/client");
+const prisma = new PrismaClient();
 
-async function seedCompany() {
-  const demoCompany = [
+async function seedMainCompany() {
+  const mainCompany = await prisma.company.create({
+    data: {
+      companyName: "Lohum",
+      companyStatus: "ACTIVE",
+    },
+  });
+  console.log("Main company Lohum created successfully.");
+  return mainCompany;
+}
+
+async function seedCompanies(mainCompany) {
+  const demoCompanies = [
     { companyName: "Test: Acme Corp", companyStatus: "ACTIVE" },
     { companyName: "Test: Globex Corporation", companyStatus: "ACTIVE" },
     { companyName: "Test: Soylent Corp", companyStatus: "ACTIVE" },
     { companyName: "Test: Initech", companyStatus: "ACTIVE" },
-    {
-      companyName: "Test: Test: Umbrella Corporation",
-      companyStatus: "ACTIVE",
-    },
+    { companyName: "Test: Umbrella Corporation", companyStatus: "ACTIVE" },
   ];
 
-  const company = [];
-  for (const company of demoCompany) {
+  const companies = [mainCompany];
+  for (const company of demoCompanies) {
     const createdCompany = await prisma.company.create({
       data: company,
     });
-    company.push(createdCompany);
+    companies.push(createdCompany);
   }
-  console.log("Seed data for company inserted successfully.");
-  return company;
+  console.log("Seed data for companies inserted successfully.");
+  return companies;
 }
 
-async function seedDealers(company) {
+async function seedDealers(companies) {
   const demoDealers = [
     {
       name: "Test: Dealer A",
@@ -51,13 +60,28 @@ async function seedDealers(company) {
     const createdDealer = await prisma.dealer.create({
       data: {
         ...dealer,
-        companyID: company[i % company.length].id,
+        companyID: companies[i % companies.length].id,
       },
     });
     dealers.push(createdDealer);
   }
   console.log("Seed data for dealers inserted successfully.");
   return dealers;
+}
+
+async function seedSuperAdmin(mainCompany, dealers) {
+  const superAdmin = await prisma.user.create({
+    data: {
+      name: "Super Admin",
+      email: "superadmin@lohum.com",
+      phone: "9000000000",
+      password: "superadminpassword",
+      role: "SUPER_ADMIN",
+      dealerId: dealers[0].id, // Assuming the first dealer is associated with Lohum
+    },
+  });
+  console.log("Super Admin user created successfully.");
+  return superAdmin;
 }
 
 async function seedUsers(dealers) {
@@ -67,14 +91,14 @@ async function seedUsers(dealers) {
       email: "usera@example.com",
       phone: "9111111111",
       password: "password123",
-      role: "ADMIN",
+      role: "COMPANY_ADMIN",
     },
     {
       name: "Test: User B",
       email: "userb@example.com",
       phone: "9111111112",
       password: "password456",
-      role: "USER",
+      role: "DEALER_ADMIN",
     },
     {
       name: "Test: User C",
@@ -97,7 +121,7 @@ async function seedUsers(dealers) {
   console.log("Seed data for users inserted successfully.");
 }
 
-async function seedRequests(company, dealers) {
+async function seedRequests(companies, dealers) {
   const demoRequests = [
     {
       lotWeightKg: 1000,
@@ -127,7 +151,7 @@ async function seedRequests(company, dealers) {
     await prisma.request.create({
       data: {
         ...request,
-        companyID: company[i % company.length].id,
+        companyID: companies[i % companies.length].id,
         dealerId: dealers[i % dealers.length].id,
       },
     });
@@ -137,10 +161,12 @@ async function seedRequests(company, dealers) {
 
 async function main() {
   try {
-    const company = await seedCompany();
-    const dealers = await seedDealers(company);
+    const mainCompany = await seedMainCompany();
+    const companies = await seedCompanies(mainCompany);
+    const dealers = await seedDealers(companies);
+    await seedSuperAdmin(mainCompany, dealers);
     await seedUsers(dealers);
-    await seedRequests(company, dealers);
+    await seedRequests(companies, dealers);
     console.log("All seed data inserted successfully.");
   } catch (e) {
     console.error("Error seeding data:", e);

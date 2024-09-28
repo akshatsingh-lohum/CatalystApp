@@ -6,3 +6,5 @@ Know that:
 1. checkSameCompany - takes in dealerID 
 2. checkSameDealer - takes in requestID
 3. checkSameUser - takes in requestID
+
+4. routes.txt is made automatically when the server is added, it is a list of all the APIs.
