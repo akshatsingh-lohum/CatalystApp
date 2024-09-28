@@ -1,2 +1,8 @@
 1. Fix all the FIX THIS
 2. Add apprpriate resource check middlewares - sameCompany, sameDealer, etc
+
+
+Know that:
+1. checkSameCompany - takes in dealerID 
+2. checkSameDealer - takes in requestID
+3. checkSameUser - takes in requestID

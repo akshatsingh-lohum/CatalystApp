@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
 const attachUserInfo = async (req, res, next) => {
@@ -36,4 +36,4 @@ const attachUserInfo = async (req, res, next) => {
   }
 };
 
-export default attachUserInfo;
+module.exports = attachUserInfo;

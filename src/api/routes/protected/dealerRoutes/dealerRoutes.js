@@ -3,6 +3,7 @@ const dealerController = require("../../../controllers/dealerController");
 const advancedCheckAccess = require("../../../../../middleware/advancedCheckAccess");
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
+const attachUserInfo = require("../../../../../middleware/attachUserInfo");
 
 const router = express.Router();
 

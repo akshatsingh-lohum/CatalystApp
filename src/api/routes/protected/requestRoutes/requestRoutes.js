@@ -1,6 +1,7 @@
 const express = require("express");
 const requestController = require("../../../controllers/requestController");
 const advancedCheckAccess = require("../../../../../middleware/advancedCheckAccess");
+const attachUserInfo = require("../../../../../middleware/attachUserInfo");
 
 const router = express.Router();
 

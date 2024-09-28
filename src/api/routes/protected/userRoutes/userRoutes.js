@@ -1,12 +1,13 @@
 const express = require("express");
 const userController = require("../../../controllers/userController");
+const attachUserInfo = require("../../../../../middleware/attachUserInfo");
 
 const router = express.Router();
 
 const {
   checkSameUser,
   checkSameCompany,
-  checkSameDealer,
+  checkSameDealerViaUserId,
 } = require("../../../../../middleware/sameEntityCheck");
 
 const {
@@ -27,19 +28,19 @@ router.get("/getAll", dealerAdminOrHigher, userController.getAllUsers);
 router.get(
   "/:id",
   dealerAdminOrHigher,
-  checkSameDealer,
+  checkSameDealerViaUserId,
   userController.getUserById
 );
 router.put(
   "/:id",
   dealerAdminOrHigher,
-  checkSameDealer,
+  checkSameDealerViaUserId,
   userController.updateUser
 );
 router.delete(
   "/:id",
   dealerAdminOrHigher,
-  checkSameDealer,
+  checkSameDealerViaUserId,
   userController.deleteUser
 );
 
