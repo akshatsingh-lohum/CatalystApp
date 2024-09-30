@@ -1,8 +1,10 @@
 GET /
 POST \/?(?=\/|$)/\/auth\/?(?=\/|$)/login
 POST \/?(?=\/|$)/\/auth\/?(?=\/|$)/signup
+POST \/?(?=\/|$)/\/auth\/?(?=\/|$)/forgot-password
 POST \/?(?=\/|$)/\/auth\/?(?=\/|$)/login
 POST \/?(?=\/|$)/\/auth\/?(?=\/|$)/signup
+POST \/?(?=\/|$)/\/auth\/?(?=\/|$)/forgot-password
 GET \/?(?=\/|$)/\/companyRoutes\/company\/?(?=\/|$)/getAll
 POST \/?(?=\/|$)/\/companyRoutes\/company\/?(?=\/|$)/create
 DELETE \/?(?=\/|$)/\/companyRoutes\/company\/?(?=\/|$)/:id

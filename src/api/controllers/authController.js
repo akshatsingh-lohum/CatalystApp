@@ -3,6 +3,11 @@ const bcrypt = require("bcrypt");
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
+// const redis = require("redis");
+// const client = redis.createClient();
+
+sendPasswordResetEmail = require("../helpersAndServices/sendEmail");
+
 const generateToken = (user) => {
   return jwt.sign(
     {
@@ -95,4 +100,16 @@ exports.signup = async (req, res) => {
     console.error(error);
     res.status(500).json({ error: "Server error", details: error.message });
   }
+};
+
+exports.forgotPassword = async (req, res) => {
+  const { email } = req.body;
+  if (!email) {
+    return res.status(400).json({ error: "Email is required." });
+  }
+
+  const sendPasswordResetEmail = (email) => {
+    sendPasswordResetEmail(email);
+    console.log(`Sending password reset email to ${email}`);
+  };
 };
